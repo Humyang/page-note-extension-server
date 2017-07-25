@@ -11,6 +11,8 @@
   "dependencies": {
     "koa": "^2.3.0",
     "koa-better-body": "^3.0.4",
-    "koa-router": "^7.2.1"
+    "koa-mongo": "^1.2.1",
+    "koa-router": "^7.2.1",
+    "querystring": "^0.2.0"
   }
 }

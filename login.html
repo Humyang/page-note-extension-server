@@ -47,54 +47,47 @@ a.btn_ {
 	</div>
 
 	<script type="text/javascript">
-
-		
-  			
-		function login(){
+		function ajax(opt,data){
 
 			var xmlObj = new XMLHttpRequest()
-		  	xmlObj.open("post",'http://localhost:3000/login',true);
+			xmlObj.open(opt.method,opt.url,true);
 
-			var username = document.getElementById('username')
-			var password = document.getElementById('password')
-			
+
 			var formData = new FormData();
-			formData.append('username', username.value);
-			formData.append('password', password.value);
-			
+
+			for(i in data){
+				formData.append(i,data[i])
+			}
 			xmlObj.send(formData);
 
-		    //请求完成后执行的操作
-		    xmlObj.addEventListener("load", function(event){
-
-		        var obj = JSON.parse(event.target.responseText)
-
-		        console.log(obj)
-		    }, false);
-
-
+			return new Promise(function(reslove,reject){
+			    xmlObj.addEventListener("load", function(event){
+		        	var obj = JSON.parse(event.target.responseText)
+		        	reslove(obj)
+		    	}, false);
+			})
+		}
+		function login(){
+			var username = document.getElementById('username')
+			var password = document.getElementById('password')
+			ajax({method:'POST',url:'http://localhost:3000/login'},{username:username.value,password:password.value})
+				.then(function(obj){
+					// console.log(obj)
+					// 传递tokenA给后台验证
+					ajax({method:'POST',url:'http://localhost:3200/oauth_login'},
+						{'token':obj.token}).then(function(res){
+							console.log(res)
+						})
+					// 验证成功，获取tokenB
+				})
 		}
 		function regiest(){
-			var xmlObj = new XMLHttpRequest()
-		  	xmlObj.open("post",'http://localhost:3000/regiest',true);
-
 			var username = document.getElementById('username')
 			var password = document.getElementById('password')
-			
-			var formData = new FormData();
-
-			formData.append('username', username.value);
-			formData.append('password', password.value);
-			
-			xmlObj.send(formData);
-
-		    //请求完成后执行的操作
-		    xmlObj.addEventListener("load", function(event){
-
-		        var obj = JSON.parse(event.target.responseText)
-
-		        console.log(obj)
-		    }, false);
+			ajax({method:'POST',url:'http://localhost:3000/regiest'},{username:username.value,password:password.value})
+				.then(function(obj){
+					// console.log(obj)
+				})
 		}
 	</script>
 </body>
