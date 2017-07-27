@@ -76,9 +76,10 @@ a.btn_ {
 					// 传递tokenA给后台验证
 					ajax({method:'POST',url:'http://localhost:3200/oauth_login'},
 						{'token':obj.token}).then(function(res){
+							// 验证成功，获取tokenB
 							console.log(res)
 						})
-					// 验证成功，获取tokenB
+					
 				})
 		}
 		function regiest(){
