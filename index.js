@@ -2,11 +2,13 @@ var koa = require('koa')
 var koaRouter = require('koa-router')
 var body = require('koa-better-body')
 var mongo = require('koa-mongo')
+var uid = require('uid')
 const app = new koa();
 const router = new koaRouter();
 const PORT = 3200;
 
-var OAUTCH_CLIENT = require('../oauth_client/index.js')
+var OAUTCH_CLIENT = require('../oauth_client/lib/index.js')
+
 function middleware(){
     return async function(ctx,next){
         console.log(5)
@@ -16,6 +18,40 @@ function middleware(){
 }
 
 router.post('/oauth_login',OAUTCH_CLIENT.oauth_client)
+
+router.post('/note',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
+    // 获取参数
+    let token = ctx.request.fields.token
+    let note = ctx.request.fields.token
+    let position = ctx.request.fields.position
+    // 有id说明是更新，没 id 则是新数据
+    let note_id = ctx.request.fields.note_id
+
+    if(!note_id){
+        note_id = uid(40)
+    }
+
+    let update_ = {
+        note_id,
+        uid:ctx.LOGIN_STATUS.uid,
+        note,
+        position
+    }
+
+    // 插入数据库
+    let res = await ctx.mongo
+                .db(CONFIG.dbName)
+                .collection(MODULE_CONFIG.COLLECTION)
+                .update(query_obj,
+                    {'$set':{update_}},
+                    {'upsert':true}
+                )
+
+    // 返回
+    ctx.body = {
+        status:true
+    }
+})
 
 
 router.get('/',middleware(),async function(ctx,next){
