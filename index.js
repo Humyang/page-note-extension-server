@@ -8,6 +8,7 @@ const router = new koaRouter();
 const PORT = 3200;
 
 var OAUTCH_CLIENT = require('../oauth_client/lib/index.js')
+var CONFIG = require('./config.js')
 
 function middleware(){
     return async function(ctx,next){
@@ -39,10 +40,11 @@ router.post('/note',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
     }
 
     // 插入数据库
+    // console.log(CONFIG.dbname)
     let res = await ctx.mongo
                 .db(CONFIG.dbName)
-                .collection(MODULE_CONFIG.COLLECTION)
-                .update(query_obj,
+                .collection('note')
+                .update({uid},
                     {'$set':{update_}},
                     {'upsert':true}
                 )

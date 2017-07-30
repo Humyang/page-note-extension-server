@@ -1,5 +1,5 @@
 module.exports = {
-    dbname:'OAUTH_CLIENT',
+    dbName:'PAGE_NOTE',
     port:8100,
 	server:{
 		url:'localhost',
