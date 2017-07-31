@@ -23,7 +23,9 @@
     margin-bottom: 10px;
     width: 80%
 }
-
+body{
+	    width: 300px;
+}
 #login a {
     color: #fff
 }
@@ -42,56 +44,13 @@ a.btn_ {
 	    <div>
 	    	<input id="password" type="password" placeholder="密码">
 	    </div>
-	    <a class="btn_" href="#" onClick="login()" >登录</a>
-	    <a class="btn_" " href="#" onClick="regiest()">注册</a>
+	    <a class="btn_" href="#" id="btn_login" >登录</a>
+	    <a class="btn_" " href="#" id="btn_regiest">注册</a>
 	</div>
-
-	<script type="text/javascript">
-
-		let loginServer = 'http://localhost:3000/login'
-		let regiestServer = 'http://localhost:3000/regiest'
-		let loginClient = 'http://localhost:3200/oauth_login'
-
-		function ajax(opt,data){
-
-			var xmlObj = new XMLHttpRequest()
-			xmlObj.open('POST',opt.url,true);
-
-			var formData = new FormData();
-
-			for(i in data){
-				formData.append(i,data[i])
-			}
-			xmlObj.send(formData);
-
-			return new Promise(function(reslove,reject){
-			    xmlObj.addEventListener("load", function(event){
-		        	var obj = JSON.parse(event.target.responseText)
-		        	reslove(obj)
-		    	}, false);
-			})
-		}
-		function login(){
-			var username = document.getElementById('username')
-			var password = document.getElementById('password')
-			ajax({url:loginServer},{username:username.value,password:password.value})
-				.then(function(obj){
-					// 传递tokenA给后台验证
-					ajax({url:loginClient},
-						{'token':obj.token}).then(function(res){
-							// 验证成功，得到tokenB
-							console.log(res)
-						})
-					
-				})
-		}
-		function regiest(){
-			var username = document.getElementById('username')
-			var password = document.getElementById('password')
-			ajax({url:regiestServer},{username:username.value,password:password.value})
-				.then(function(obj){
-				})
-		}
+	
+	<script src="./login.js"></script>
+	<script>
+		chrome.tabs.executeScript(null, { file: "page-note.js" });
 	</script>
 </body>
 </html>

@@ -7,23 +7,18 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     // chrome.browserAction.getBadgeBackgroundColor(function(obj){
     // 	console.log(obj)
     // })
-    // if (tab.url.indexOf("http:") != 0 &&
-    //     tab.url.indexOf("https:") != 0) {
-    //     executeMailto(tab.id, "", tab.url, "");
-    // } else {
+    if (tab.url.indexOf("http:") != 0 &&
+        tab.url.indexOf("https:") != 0) {
+        executeMailto(tab.id, "", tab.url, "");
+    } else {
         // chrome.browserAction.setIcon(object details)
 
         chrome.browserAction.setIcon({
             path: "iconActive.png"
         });
 
-        // chrome.browserAction.setPopup({
-        //     popup:'login.html'
-        // })
-        
-
-        
-    // }
+        chrome.tabs.executeScript(null, { file: "page-note.js" });
+    }
 });
 
 
@@ -31,23 +26,18 @@ chrome.runtime.onConnect.addListener(function(port) {
   // var tab = port.sender.tab;
   // This will get called by the content script we execute in
   // the tab as a result of the user pressing the browser action.
-  port.onMessage.addListener(function(msg) {
-    if(msg.type === 'icon'){
-        if(msg.enable){
+  port.onMessage.addListener(function(info) {
+  	if(info.enable){
+  		// alert(1)
         chrome.browserAction.setIcon({
-            path: "iconActive.png"
-        });
-        }else{
-            chrome.browserAction.setIcon({
-                path: "icon.png"
-            });
-        }
-    }
-  	if(msg.type=== 'LOGIN_SUCCESS'){
-        chrome.browserAction.setPopup({
-            popup:'index.html'
-        })
-    }
+    	    path: "iconActive.png"
+	    });
+  	}else{
+  		// alert(2)
+  		chrome.browserAction.setIcon({
+    	    path: "icon.png"
+	    });
+  	}
   });
 });
 
