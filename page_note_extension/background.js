@@ -1,5 +1,13 @@
+alert(1)
 // Called when the user clicks on the browser action icon.
 chrome.browserAction.onClicked.addListener(function(tab) {
+
+    // 如果没登录，弹出login
+// alert()
+    chrome.tabs.create({url: 'localhost:3200/login.html?eid='+chrome.i18n.getMessage("@@extension_id")})
+
+
+
     // We can only inject scripts to find the title on pages loaded with http
     // and https so for all other pages, we don't ask for the title.
     // alert(123)s
@@ -13,21 +21,25 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     // } else {
         // chrome.browserAction.setIcon(object details)
 
-        chrome.browserAction.setIcon({
-            path: "iconActive.png"
-        });
+        // chrome.browserAction.setIcon({
+        //     path: "iconActive.png"
+        // });
 
+
+        // localStorage.setItem("aaa","bbb")
+        // alert(localStorage)
+        // console.log(localStorage)
         // chrome.browserAction.setPopup({
         //     popup:'login.html'
         // })
         
-
         
     // }
 });
 
 
 chrome.runtime.onConnect.addListener(function(port) {
+    // console.log(port)
   // var tab = port.sender.tab;
   // This will get called by the content script we execute in
   // the tab as a result of the user pressing the browser action.
@@ -48,10 +60,37 @@ chrome.runtime.onConnect.addListener(function(port) {
             popup:'index.html'
         })
     }
+    if(msg.type=== 'fromLogin'){
+        // chrome.browserAction.setPopup({
+        //     popup:'index.html'
+        // })
+        chrome.tabs.create({url: 'localhost:3200/login.html?eid='+chrome.i18n.getMessage("@@extension_id")})
+    }
+
   });
 });
 
+chrome.runtime.onMessage.addListener(function(request) {
+    alert(request)
+  // if (request == 'poll') {
+  //   pollProgress.start();
+  // }
+  // if (request == 'icons') {
+  //   [16, 19, 38, 128].forEach(function(s) {
+  //     var canvas = drawIcon(s);
+  //     chrome.downloads.download({
+  //       url: canvas.toDataURL('image/png', 1.0),
+  //       filename: 'icon' + s + '.png',
+  //     });
+  //     canvas.parentNode.removeChild(canvas);
+  //   });
+  // }
+  // if (isNumber(request.openWhenComplete)) {
+  //   openWhenComplete(request.openWhenComplete);
+  // }
+});
 chrome.tabs.onActivated.addListener(function(activeInfo) {
+    
 	chrome.tabs.executeScript(null, { file: "checkEnable.js" });
 	// chrome.browserAction.setIcon({
 	//     path: "iconActive.png"

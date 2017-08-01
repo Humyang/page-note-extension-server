@@ -2,7 +2,8 @@ var koa = require('koa')
 var koaRouter = require('koa-router')
 var body = require('koa-better-body')
 var mongo = require('koa-mongo')
-var uid = require('uid')
+var uid = require('uid2')
+var serve = require('koa-static');
 const app = new koa();
 const router = new koaRouter();
 const PORT = 3200;
@@ -18,7 +19,9 @@ function middleware(){
     }
 }
 
-router.post('/oauth_login',OAUTCH_CLIENT.oauth_client)
+app.use(serve(".",{maxage:3153600000}))
+
+router.post('/oauth_login',OAUTCH_CLIENT.oauth_client())
 
 router.post('/note',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
     // 获取参数

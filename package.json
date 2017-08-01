@@ -13,7 +13,8 @@
     "koa-better-body": "^3.0.4",
     "koa-mongo": "^1.2.1",
     "koa-router": "^7.2.1",
+    "koa-static": "^4.0.1",
     "querystring": "^0.2.0",
-    "uid": "0.0.2"
+    "uid2": "0.0.3"
   }
 }

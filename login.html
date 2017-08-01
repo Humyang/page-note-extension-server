@@ -67,20 +67,31 @@ a.btn_ {
 		    	}, false);
 			})
 		}
+		function getQueryString(name) { 
+		    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+		    var r = window.location.search.substr(1).match(reg); 
+		    if (r != null) return decodeURI(r[2]); return null; 
+		} 
+		var eid = getQueryString('eid')
 		function login(){
-			var username = document.getElementById('username')
-			var password = document.getElementById('password')
-			ajax({method:'POST',url:'http://localhost:3000/login'},{username:username.value,password:password.value})
-				.then(function(obj){
-					// console.log(obj)
-					// 传递tokenA给后台验证
-					ajax({method:'POST',url:'http://localhost:3200/oauth_login'},
-						{'token':obj.token}).then(function(res){
-							// 验证成功，获取tokenB
-							console.log(res)
-						})
+			var Msg = {
+		        "type": "fromLogin"
+		    };
+		    chrome.runtime.sendMessage(eid,Msg)
+		    // chrome.runtime.connect(eid).postMessage(Msg);
+			// var username = document.getElementById('username')
+			// var password = document.getElementById('password')
+			// ajax({method:'POST',url:'http://localhost:3000/login'},{username:username.value,password:password.value})
+			// 	.then(function(obj){
+			// 		// console.log(obj)
+			// 		// 传递tokenA给后台验证
+			// 		ajax({method:'POST',url:'http://localhost:3200/oauth_login'},
+			// 			{'token':obj.token}).then(function(res){
+			// 				// 验证成功，获取tokenB
+			// 				console.log(res)
+			// 			})
 					
-				})
+			// 	})
 		}
 		function regiest(){
 			var username = document.getElementById('username')
