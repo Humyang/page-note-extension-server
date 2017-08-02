@@ -1,6 +1,18 @@
-// alert(@@extension_id)
-chrome.tabs.executeScript(null, { file: "content_script.js" });
-chrome.tabs.executeScript(null, { file: "checkEnable.js" });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // let loginServer = 'http://localhost:3000/login'
 // let regiestServer = 'http://localhost:3000/regiest'

@@ -24,6 +24,7 @@ function checkStyle(){
 
 
 function noteMarl_init(){
+	// alert(localStorage.getItem('token'))
 	var ControlDown = false
 	window.addEventListener("keydown",function(event){
 		if(event.key==="Control"){
@@ -40,6 +41,7 @@ function noteMarl_init(){
 			return
 		}
 		var elementNode = document.getElementById("noteMark_wrap_add")
+
 		if(!elementNode){
 			var element=document.createElement('div')
 			var save=document.createElement('a')
@@ -49,6 +51,12 @@ function noteMarl_init(){
 			save.href="#"
 			save.text="保存"
 			save.onclick=function(e){
+				// alert(localStorage.getItem('token'))
+				var Msg = {
+						type:'saveMsg',
+				        "msg": 123333
+				    };
+				chrome.runtime.connect().postMessage(Msg);
 				e.preventDefault()
 			}
 			cancel.id="noteMark_cancel"
@@ -72,6 +80,7 @@ function noteMarl_init(){
 		event.preventDefault()
 	})
 }
+
 noteMarl_init()
 checkStyle()
 

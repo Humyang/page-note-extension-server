@@ -1,6 +1,7 @@
 
 // console.log(123)
 // alert(123)
+// alert(localStorage.getItem('token'))
 var nodeBox = document.getElementById("noteBox")
 
 var Msg = {

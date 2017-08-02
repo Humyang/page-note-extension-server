@@ -22,7 +22,7 @@ function middleware(){
 app.use(serve(".",{maxage:3153600000}))
 
 router.get('/login_success',async function(ctx){
-    ctx.body = 'login_success'
+    ctx.body = '登录成功'
 })
 
 router.post('/oauth_login',OAUTCH_CLIENT.oauth_client())
@@ -30,9 +30,10 @@ router.post('/oauth_login',OAUTCH_CLIENT.oauth_client())
 router.post('/note',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
     // 获取参数
     let token = ctx.request.fields.token
-    let note = ctx.request.fields.token
+    let note = ctx.request.fields.note
     let position = ctx.request.fields.position
-    // 有id说明是更新，没 id 则是新数据
+    
+    // 有note_id说明是更新，没 id 则是新数据
     let note_id = ctx.request.fields.note_id
 
     if(!note_id){

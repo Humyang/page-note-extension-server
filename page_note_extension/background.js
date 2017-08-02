@@ -1,52 +1,51 @@
-// alert(1)
+
+const LOGIN_URL = 'http://localhost:3200'
+function isLogined(){
+    let token = localStorage.getItem('token')
+    if(!!!token){
+        return false
+    }
+    return true
+    // 检验登录状态
+}
 // Called when the user clicks on the browser action icon.
 chrome.browserAction.onClicked.addListener(function(tab) {
+    
 
-    // 如果没登录，弹出login
-// alert()
-    // chrome.tabs.create({url: 'localhost:3200/login.html?eid='+chrome.i18n.getMessage("@@extension_id")})
-    // var Msg = {
-    //         "type": "fromLogin"
-    //     };
-        // chrome.runtime.sendMessage({})
-chrome.runtime.sendMessage(
-          {}, function(response) { console.log(response); });
+    // 判断是否登录
+    if(isLogined()){
+        // 已登录
+        // 加载笔记，加载content script
+        chrome.tabs.executeScript(null, { file: "content_script.js" });
+        chrome.tabs.executeScript(null, { file: "checkEnable.js" });
 
-    // We can only inject scripts to find the title on pages loaded with http
-    // and https so for all other pages, we don't ask for the title.
-    // alert(123)s
-    //   console.log(123)
-    // chrome.browserAction.getBadgeBackgroundColor(function(obj){
-    // 	console.log(obj)
-    // })
-    // if (tab.url.indexOf("http:") != 0 &&
-    //     tab.url.indexOf("https:") != 0) {
-    //     executeMailto(tab.id, "", tab.url, "");
-    // } else {
-        // chrome.browserAction.setIcon(object details)
-
-        // chrome.browserAction.setIcon({
-        //     path: "iconActive.png"
-        // });
-
-
-        // localStorage.setItem("aaa","bbb")
-        // alert(localStorage)
-        // console.log(localStorage)
-        // chrome.browserAction.setPopup({
-        //     popup:'login.html'
-        // })
-        
-        
-    // }
+        //页面右上角显示弹窗
+    }else{
+        // 未登录，弹窗登录页面
+        chrome.tabs.create({url: LOGIN_URL+'/login.html'})
+    }
 });
 
+function ajax(opt,data){
+    var xmlObj = new XMLHttpRequest()
+    xmlObj.open(opt.method,opt.url,true);
 
+
+    var formData = new FormData();
+
+    for(i in data){
+        formData.append(i,data[i])
+    }
+    xmlObj.send(formData);
+
+    return new Promise(function(reslove,reject){
+        xmlObj.addEventListener("load", function(event){
+            var obj = JSON.parse(event.target.responseText)
+            reslove(obj)
+        }, false);
+    })
+}
 chrome.runtime.onConnect.addListener(function(port) {
-    // console.log(port)
-  // var tab = port.sender.tab;
-  // This will get called by the content script we execute in
-  // the tab as a result of the user pressing the browser action.
   port.onMessage.addListener(function(msg) {
     if(msg.type === 'icon'){
         if(msg.enable){
@@ -59,66 +58,33 @@ chrome.runtime.onConnect.addListener(function(port) {
             });
         }
     }
-  	if(msg.type=== 'LOGIN_SUCCESS'){
-        chrome.browserAction.setPopup({
-            popup:'index.html'
+    if(msg.type === 'saveMsg'){
+        var token = localStorage.getItem('token')
+        // 保存数据
+        
+        ajax({method:'POST',url:'http://localhost:3200/note'},
+                {
+                    token:token,
+                    note:'123123',
+                    position:JSON.stringify({x:1,y:2})
+                }
+            )
+        .then(function(obj){
+            alert(obj)
+            console.log(obj)
+            
         })
     }
-    if(msg.type=== 'fromLogin'){
-        // chrome.browserAction.setPopup({
-        //     popup:'index.html'
-        // })
-        chrome.tabs.create({url: 'localhost:3200/login.html?eid='+chrome.i18n.getMessage("@@extension_id")})
-    }
-
   });
 });
 
-chrome.runtime.onMessage.addListener(function(request) {
-    console.log(123)
-});
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-   console.log(123)
-  
-});
-
-chrome.tabs.onActivated.addListener(function(activeInfo) {
+chrome.runtime.onMessage.addListener(function(token) {
+    // alert(token)
+    localStorage.setItem('token',token)
+    // alert(localStorage.getItem('token'))
+    // chrome.tabs.executeScript(null, { code:`localStorage.setItem('token','4444')` });
     
+});
+chrome.tabs.onActivated.addListener(function(activeInfo) {
 	chrome.tabs.executeScript(null, { file: "checkEnable.js" });
-	// chrome.browserAction.setIcon({
-	//     path: "iconActive.png"
- //    });
-    // how to fetch tab url using activeInfo.tabid
-    // chrome.tabs.get(activeInfo.tabId, function(tab) {
-    //     if (localStorage['connected'] > 0) {
-    //         var domaintmp = tab.url.split("/");
-    //         var domain = domaintmp[2];
-    //         if (domain.indexOf("www.") == 0) {
-    //             domain = domain.replace("www.", "");
-    //         }
-    //         var isSSL = 0;
-    //         auto_black = localStorage['localbldomain'].split("\n");
-    //         for (i = 0; i < auto_black.length; i++) {
-    //             if (auto_black[i].length < 3) continue;
-    //             if (dnsDomainIs(domain, auto_black[i])) {
-    //                 isSSL = 1;
-    //                 break;
-    //             }
-    //         }
-    //         // if(localStorage['globalssl'] >0)isSSL=1;
-
-    //         if (isSSL > 0) {
-    //             chrome.browserAction.setIcon({
-    //                 path: "icon-ok-go.png"
-    //             });
-    //         } else {
-
-    //             chrome.browserAction.setIcon({
-    //                 path: "icon-ok.png"
-    //             });
-
-    //         }
-    //     }
-
-    // })
 })
