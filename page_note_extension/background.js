@@ -4,9 +4,13 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
     // 如果没登录，弹出login
 // alert()
-    chrome.tabs.create({url: 'localhost:3200/login.html?eid='+chrome.i18n.getMessage("@@extension_id")})
-
-
+    // chrome.tabs.create({url: 'localhost:3200/login.html?eid='+chrome.i18n.getMessage("@@extension_id")})
+    // var Msg = {
+    //         "type": "fromLogin"
+    //     };
+        // chrome.runtime.sendMessage({})
+chrome.runtime.sendMessage(
+          {}, function(response) { console.log(response); });
 
     // We can only inject scripts to find the title on pages loaded with http
     // and https so for all other pages, we don't ask for the title.
@@ -71,24 +75,13 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 chrome.runtime.onMessage.addListener(function(request) {
-    alert(request)
-  // if (request == 'poll') {
-  //   pollProgress.start();
-  // }
-  // if (request == 'icons') {
-  //   [16, 19, 38, 128].forEach(function(s) {
-  //     var canvas = drawIcon(s);
-  //     chrome.downloads.download({
-  //       url: canvas.toDataURL('image/png', 1.0),
-  //       filename: 'icon' + s + '.png',
-  //     });
-  //     canvas.parentNode.removeChild(canvas);
-  //   });
-  // }
-  // if (isNumber(request.openWhenComplete)) {
-  //   openWhenComplete(request.openWhenComplete);
-  // }
+    console.log(123)
 });
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+   console.log(123)
+  
+});
+
 chrome.tabs.onActivated.addListener(function(activeInfo) {
     
 	chrome.tabs.executeScript(null, { file: "checkEnable.js" });

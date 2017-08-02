@@ -1,4 +1,4 @@
-alert(@@extension_id)
+// alert(@@extension_id)
 chrome.tabs.executeScript(null, { file: "content_script.js" });
 chrome.tabs.executeScript(null, { file: "checkEnable.js" });
 

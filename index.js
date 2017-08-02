@@ -21,6 +21,10 @@ function middleware(){
 
 app.use(serve(".",{maxage:3153600000}))
 
+router.get('/login_success',async function(ctx){
+    ctx.body = 'login_success'
+})
+
 router.post('/oauth_login',OAUTCH_CLIENT.oauth_client())
 
 router.post('/note',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){

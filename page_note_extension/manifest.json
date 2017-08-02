@@ -3,6 +3,12 @@
   "background": {
     "scripts": ["background.js"]
   },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3200/login_success"],
+      "js": ["sendMsg.js"]
+    }
+  ],
   "permissions": [
     "tabs", 
     "http://*/*", 
@@ -16,7 +22,7 @@
   "version": "1.1",
   "browser_action": {
     "default_icon": "icon.png"
-    // ,
-    // "default_popup": "login.html"
+    ,
+    "default_popup": "login.html"
   }
 }
