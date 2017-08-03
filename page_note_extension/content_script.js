@@ -6,7 +6,7 @@ function checkStyle(){
 	if(!!!nodeBox){
 		var noteBoxStyle = `
 		#noteMark_wrap_add{    
-			position: fixed;
+			position: absolute;
 		    top: 0;
 		    left: 0;
 		    width: 200px;

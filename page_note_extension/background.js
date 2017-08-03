@@ -81,6 +81,11 @@ chrome.runtime.onConnect.addListener(function(port) {
 chrome.runtime.onMessage.addListener(function(token) {
     // alert(token)
     localStorage.setItem('token',token)
+
+    //TODO: 找到原跳转页面，执行 content_script
+    
+    chrome.tabs.executeScript(null, { file: "content_script.js" });
+    chrome.tabs.executeScript(null, { file: "checkEnable.js" });
     // alert(localStorage.getItem('token'))
     // chrome.tabs.executeScript(null, { code:`localStorage.setItem('token','4444')` });
     
