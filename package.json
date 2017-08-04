@@ -4,14 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start":"node index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "graphql": "^0.10.5",
+    "graphql-server-koa": "^1.0.5",
     "koa": "^2.3.0",
     "koa-better-body": "^3.0.4",
+    "koa-body": "^2.3.0",
     "koa-mongo": "^1.2.1",
     "koa-router": "^7.2.1",
     "koa-static": "^4.0.1",

@@ -16,9 +16,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     if(isLogined()){
         // 已登录
         // 加载笔记，加载content script
-        chrome.tabs.executeScript(null, { file: "content_script.js" });
-        chrome.tabs.executeScript(null, { file: "checkEnable.js" });
+        chrome.tabs.executeScript(null, { file: "./contentScript/noteInit.js" });
+        chrome.tabs.executeScript(null, { file: "./contentScript/checkEnable.js" });
 
+        chrome.tabs.executeScript(null, { file: "./contentScript/loadList.js" });
         //页面右上角显示弹窗
     }else{
         // 未登录，弹窗登录页面
@@ -62,7 +63,7 @@ chrome.runtime.onConnect.addListener(function(port) {
         var token = localStorage.getItem('token')
         // 保存数据
         
-        ajax({method:'POST',url:'http://localhost:3200/note'},
+        ajax({method:'POST',url:LOGIN_URL+'/note'},
                 {
                     token:token,
                     note:'123123',
@@ -78,18 +79,14 @@ chrome.runtime.onConnect.addListener(function(port) {
   });
 });
 
-chrome.runtime.onMessage.addListener(function(token) {
-    // alert(token)
-    localStorage.setItem('token',token)
-
-    //TODO: 找到原跳转页面，执行 content_script
-    
-    chrome.tabs.executeScript(null, { file: "content_script.js" });
-    chrome.tabs.executeScript(null, { file: "checkEnable.js" });
-    // alert(localStorage.getItem('token'))
-    // chrome.tabs.executeScript(null, { code:`localStorage.setItem('token','4444')` });
-    
+chrome.runtime.onMessage.addListener(function(msg) {
+    if(msg.type === 'loginsuccess'){
+        localStorage.setItem('token',msg.token)
+        localStorage.setItem('username',msg.username)
+        chrome.tabs.executeScript(null, { file: "./contentScript/noteInit.js" });
+        chrome.tabs.executeScript(null, { file: "./contentScript/checkEnable.js" });
+    }
 });
 chrome.tabs.onActivated.addListener(function(activeInfo) {
-	chrome.tabs.executeScript(null, { file: "checkEnable.js" });
+	chrome.tabs.executeScript(null, { file: "./contentScript/checkEnable.js" });
 })
