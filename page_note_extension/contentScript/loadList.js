@@ -13,7 +13,8 @@ xhr.onload = function () {
 
 var query = `
 query {
-  hello
+  hello,
+  list
 }
 
 `;

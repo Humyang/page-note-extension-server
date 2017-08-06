@@ -43,7 +43,7 @@ var myGraphQLSchema = buildSchema(`
   }
   type Query {
     hello: String,
-    list:[Note]
+    list:String
   }
 `);
 
@@ -82,16 +82,42 @@ rollDice:({numDice, numSides})=>{
     */
 
 var root = {
-  list: ({token}) => {
-    
+  list: async ({number},ctx,obj) => {
+    // let token = ctx.request.fields.token
+    let query_obj = {
+        uid:ctx.LOGIN_STATUS.uid
+    }
+    let res = await ctx.mongo
+                        .db(CONFIG.dbName)
+                        .collection('note')
+                        .find(query_obj)
+                        .sort({_id:-1})
+                        .toArray()
+                    debugger
+    return res
   },
-  hello:()=>{
+  hello:async (a,b,c,d,e,f)=>{
+        debugger
         return 'Hello world!';
   }
 };
 
-router.post('/graphql',koaBody(), graphqlKoa({ schema: myGraphQLSchema,rootValue: root,
-  graphiql: true }));
+router.post('/graphql', 
+    OAUTCH_CLIENT.oauth_login_check(),
+async function(ctx,next){
+  ctx.request.body=Object.assign({},ctx.request.fields)
+  await next()
+}
+,
+    graphqlKoa(
+    (ctx) => {
+        return {
+            schema: myGraphQLSchema,
+            rootValue: root,
+            graphiql: true,
+            context: ctx
+        }
+    }));
 
 app.use(serve("./static",{maxage:3153600000}))
 
@@ -99,9 +125,9 @@ router.get('/login_success',async function(ctx){
     ctx.body = '登录成功'
 })
 
-router.post('/oauth_login',body(),OAUTCH_CLIENT.oauth_client())
+router.post('/oauth_login',OAUTCH_CLIENT.oauth_client())
 
-router.post('/note',body(),async function(ctx,next){
+router.post('/note',async function(ctx,next){
     await next()
 },OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
     // 获取参数
@@ -124,7 +150,6 @@ router.post('/note',body(),async function(ctx,next){
     }
 
     // 插入数据库
-    // console.log(CONFIG.dbname)
     let res = await ctx.mongo
                 .db(CONFIG.dbName)
                 .collection('note')
@@ -138,42 +163,42 @@ router.post('/note',body(),async function(ctx,next){
         status:true
     }
 })
-router.post('/list',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
-    // 获取笔记列表
+// router.post('/list',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
+//     // 获取笔记列表
 
-    let token = ctx.request.fields.token
-    let note = ctx.request.fields.note
-    let position = ctx.request.fields.position
+//     let token = ctx.request.fields.token
+//     let note = ctx.request.fields.note
+//     let position = ctx.request.fields.position
     
-    // 有note_id说明是更新，没 id 则是新数据
-    let note_id = ctx.request.fields.note_id
+//     // 有note_id说明是更新，没 id 则是新数据
+//     let note_id = ctx.request.fields.note_id
 
-    if(!note_id){
-        note_id = uid(40)
-    }
+//     if(!note_id){
+//         note_id = uid(40)
+//     }
 
-    let update_ = {
-        note_id,
-        uid:ctx.LOGIN_STATUS.uid,
-        note,
-        position
-    }
+//     let update_ = {
+//         note_id,
+//         uid:ctx.LOGIN_STATUS.uid,
+//         note,
+//         position
+//     }
 
-    // 插入数据库
-    // console.log(CONFIG.dbname)
-    let res = await ctx.mongo
-                .db(CONFIG.dbName)
-                .collection('note')
-                .update({uid},
-                    {'$set':{update_}},
-                    {'upsert':true}
-                )
+//     // 插入数据库
+//     // console.log(CONFIG.dbname)
+//     let res = await ctx.mongo
+//                 .db(CONFIG.dbName)
+//                 .collection('note')
+//                 .update({uid},
+//                     {'$set':{update_}},
+//                     {'upsert':true}
+//                 )
 
-    // 返回
-    ctx.body = {
-        status:true
-    }
-})
+//     // 返回
+//     ctx.body = {
+//         status:true
+//     }
+// })
 
 router.get('/',middleware(),async function(ctx,next){
     console.log(1)
@@ -186,7 +211,7 @@ router.get('/',middleware(),async function(ctx,next){
 });
 
 
-// app.use(body());
+app.use(body());
 app.use(async function(ctx,next){
     ctx.set('Access-Control-Allow-Origin', "*");
     await next()
