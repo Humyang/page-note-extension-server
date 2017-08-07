@@ -15,6 +15,7 @@ if (!!!nodeBox) {
             xhr.setRequestHeader("Accept", "application/json");
             xhr.onload = function() {
                 console.log('data returned:', xhr.response);
+
             }
 
             var query = `
@@ -42,3 +43,8 @@ if (!!!nodeBox) {
         }
     });
 }
+function buildNoteList(list){
+    for (var i = list.length - 1; i >= 0; i--) {
+        list[i]
+    }
+} 

@@ -5,15 +5,16 @@ function checkStyle(){
 	// console.log(123)
 	if(!!!nodeBox){
 		var noteBoxStyle = `
-		#noteMark_wrap_add{    
-			position: absolute;
-		    top: 0;
-		    left: 0;
-		    width: 200px;
-		    height: 100px;
-		    background-color: #eee;
-		    z-index: 999999;
-		}
+#noteMark_wrap_add { position: absolute; top: 0; left: 0; width: 200px; height: 150px; background-color: #eee; z-index: 999999; border: 1px solid #808080; padding: 5px; border-radius: 5px }
+.animated { animation-duration: 1s; animation-fill-mode: both; animation-name: pulse; animation-iteration-count: infinite }
+@keyframes pulse {
+    0% { transform: scaleX(1) }
+    50% { transform: scale3d(1.15, 1.15, 1.15) }
+    to { transform: scaleX(1) }
+}
+div#noteMark_wrap_add a { text-decoration: none; color: #fff; border: 1px solid #009e78; border-radius: 5px; margin-right: 10px; width: 50px; display: block; float: left; text-align: center; margin-top: 5px; background-color: #00bfd0; font-size: 16px }
+div#noteMark_wrap_add textarea { display: block; border: 0; padding: 0; margin: 0; height: 110px; padding: 5px; width: 188px; border: 1px solid #ddd; border-radius: 5px }
+div#noteMark_wrap_add a:hover { background-color: #0095a2 }
 		`
 		var style = document.createElement('style');
 		style.id = "noteBox"
@@ -68,9 +69,10 @@ function noteMarl_init(){
 				e.preventDefault()
 			}
 			element.id="noteMark_wrap_add"
+			element.append(textarea)
 			element.append(save)
 			element.append(cancel)
-			element.append(textarea)
+			
 			document.body.append(element)
 			elementNode = document.getElementById("noteMark_wrap_add")
 		}
