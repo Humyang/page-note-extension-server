@@ -7,4 +7,4 @@ setTimeout(function() {
 		token:localStorage.getItem('token')
 	}
 	chrome.runtime.sendMessage(msg);
-}, 1500);
+}, 150);

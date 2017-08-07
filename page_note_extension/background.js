@@ -16,10 +16,17 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     if(isLogined()){
         // 已登录
         // 加载笔记，加载content script
+        chrome.tabs.executeScript(null, { file: "./contentScript/loadList.js" });
         chrome.tabs.executeScript(null, { file: "./contentScript/noteInit.js" });
         chrome.tabs.executeScript(null, { file: "./contentScript/checkEnable.js" });
 
-        chrome.tabs.executeScript(null, { file: "./contentScript/loadList.js" });
+        let token = localStorage.getItem('token')
+        setTimeout(function() {
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+                chrome.tabs.sendMessage(tabs[0].id, {action: "load_list",token:token}, function(response) {});  
+            });
+        }, 10);
+        
         //页面右上角显示弹窗
     }else{
         // 未登录，弹窗登录页面

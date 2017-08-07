@@ -43,7 +43,7 @@ var myGraphQLSchema = buildSchema(`
   }
   type Query {
     hello: String,
-    list:String
+    list:[Note]
   }
 `);
 
@@ -83,7 +83,6 @@ rollDice:({numDice, numSides})=>{
 
 var root = {
   list: async ({number},ctx,obj) => {
-    // let token = ctx.request.fields.token
     let query_obj = {
         uid:ctx.LOGIN_STATUS.uid
     }
@@ -93,7 +92,15 @@ var root = {
                         .find(query_obj)
                         .sort({_id:-1})
                         .toArray()
-                    debugger
+    
+    // console.log(res)
+    // return res
+
+    for (var i = res.length - 1; i >= 0; i--) {
+        res[i].position = JSON.parse(res[i].position)
+        
+    }
+
     return res
   },
   hello:async (a,b,c,d,e,f)=>{
@@ -154,7 +161,7 @@ router.post('/note',async function(ctx,next){
                 .db(CONFIG.dbName)
                 .collection('note')
                 .update({uid},
-                    {'$set':{update_}},
+                    {'$set':update_},
                     {'upsert':true}
                 )
 
