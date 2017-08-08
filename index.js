@@ -43,48 +43,16 @@ var myGraphQLSchema = buildSchema(`
   }
   type Query {
     hello: String,
-    list:[Note]
+    list(url:String):[Note]
   }
 `);
 
-/*
-hello: String,
-    rollDice(numDice:Int!,numSides:Int):[Int],
-    quoteOfTheDay:String,
-    random:Float!
-    rollThreeDice:[Int],
-    getDie(numSides:Int):RandomDie,
-    getMessage:String
-
-rollDice:({numDice, numSides})=>{
-    return [123]
-  },
-  quoteOfTheDay: () => {
-    return Math.random() < 0.5 ? 'Take it easy' : 'Salvation lies within';
-  },
-  random: () => {
-    return Math.random();
-  },
-  rollThreeDice: () => {
-    return [1, 2, 3].map(_ => 1 + Math.floor(Math.random() * 6));
-  },
-  getDie:function({numSides}){
-    return new RandomDie(numSides || 6)
-  },
-  setMessage:function({message}){
-    fakeDatabase.message = message
-    return message+"abc"
-  },
-  getMessage:function(){
-    return fakeDatabase.message
-  }
-
-    */
-
 var root = {
-  list: async ({number},ctx,obj) => {
+  list: async ({url},ctx,obj) => {
+    console.log(url)
     let query_obj = {
-        uid:ctx.LOGIN_STATUS.uid
+        uid:ctx.LOGIN_STATUS.uid,
+        url
     }
     let res = await ctx.mongo
                         .db(CONFIG.dbName)
@@ -92,9 +60,6 @@ var root = {
                         .find(query_obj)
                         .sort({_id:-1})
                         .toArray()
-    
-    // console.log(res)
-    // return res
 
     for (var i = res.length - 1; i >= 0; i--) {
         res[i].position = JSON.parse(res[i].position)
@@ -134,18 +99,17 @@ router.get('/login_success',async function(ctx){
 
 router.post('/oauth_login',OAUTCH_CLIENT.oauth_client())
 
-router.post('/note',async function(ctx,next){
-    await next()
-},OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
+router.post('/note',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
     // 获取参数
     let token = ctx.request.fields.token
     let note = ctx.request.fields.note
     let position = ctx.request.fields.position
-    
+    let url = ctx.request.fields.url
+
     // 有note_id说明是更新，没 id 则是新数据
     let note_id = ctx.request.fields.note_id
-
-    if(!note_id){
+    debugger
+    if(!!!note_id || note_id==="undefined"){
         note_id = uid(40)
     }
 
@@ -153,14 +117,15 @@ router.post('/note',async function(ctx,next){
         note_id,
         uid:ctx.LOGIN_STATUS.uid,
         note,
-        position
+        position,
+        url
     }
 
     // 插入数据库
     let res = await ctx.mongo
                 .db(CONFIG.dbName)
                 .collection('note')
-                .update({uid},
+                .update({uid,note_id,url},
                     {'$set':update_},
                     {'upsert':true}
                 )
@@ -170,42 +135,6 @@ router.post('/note',async function(ctx,next){
         status:true
     }
 })
-// router.post('/list',OAUTCH_CLIENT.oauth_login_check(),async function(ctx,next){
-//     // 获取笔记列表
-
-//     let token = ctx.request.fields.token
-//     let note = ctx.request.fields.note
-//     let position = ctx.request.fields.position
-    
-//     // 有note_id说明是更新，没 id 则是新数据
-//     let note_id = ctx.request.fields.note_id
-
-//     if(!note_id){
-//         note_id = uid(40)
-//     }
-
-//     let update_ = {
-//         note_id,
-//         uid:ctx.LOGIN_STATUS.uid,
-//         note,
-//         position
-//     }
-
-//     // 插入数据库
-//     // console.log(CONFIG.dbname)
-//     let res = await ctx.mongo
-//                 .db(CONFIG.dbName)
-//                 .collection('note')
-//                 .update({uid},
-//                     {'$set':{update_}},
-//                     {'upsert':true}
-//                 )
-
-//     // 返回
-//     ctx.body = {
-//         status:true
-//     }
-// })
 
 router.get('/',middleware(),async function(ctx,next){
     console.log(1)

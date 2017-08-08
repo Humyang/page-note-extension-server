@@ -66,21 +66,22 @@ chrome.runtime.onConnect.addListener(function(port) {
             });
         }
     }
-    if(msg.type === 'saveMsg'){
+    if(msg.type === 'saveNote'){
         var token = localStorage.getItem('token')
         // 保存数据
         
         ajax({method:'POST',url:LOGIN_URL+'/note'},
                 {
+                    note_id:msg.note_id,
                     token:token,
-                    note:'123123',
-                    position:JSON.stringify({x:1,y:2})
+                    note:msg.note,
+                    position:JSON.stringify(msg.position),
+                    url:msg.url
                 }
             )
         .then(function(obj){
-            alert(obj)
+            // alert(obj)
             console.log(obj)
-            
         })
     }
   });
