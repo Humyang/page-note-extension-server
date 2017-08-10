@@ -58,11 +58,11 @@ chrome.runtime.onConnect.addListener(function(port) {
     if(msg.type === 'icon'){
         if(msg.enable){
         chrome.browserAction.setIcon({
-            path: "iconActive.png"
+            path: "./icons/16_active.png"
         });
         }else{
             chrome.browserAction.setIcon({
-                path: "icon.png"
+                path: "./icons/16.png"
             });
         }
     }
@@ -84,17 +84,40 @@ chrome.runtime.onConnect.addListener(function(port) {
             console.log(obj)
         })
     }
+    
   });
 });
-
+function sendMsg(obj){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.sendMessage(tabs[0].id,obj , function(response) {});  
+    });
+}
 chrome.runtime.onMessage.addListener(function(msg) {
-    if(msg.type === 'loginsuccess'){
+    if(msg.action === 'loginsuccess'){
         localStorage.setItem('token',msg.token)
         localStorage.setItem('username',msg.username)
         chrome.tabs.executeScript(null, { file: "./contentScript/noteInit.js" });
         chrome.tabs.executeScript(null, { file: "./contentScript/checkEnable.js" });
     }
+    if(msg.action === 'checkLogin'){
+        // 判断是否登录
+        if(isLogined()){
+            // 已登录
+            let token = localStorage.getItem('token')
+            sendToCS({action:'load_list',token:token})
+        }else{
+            // 未登录，弹窗登录页面
+            chrome.tabs.create({url: LOGIN_URL+'/login.html'})
+        }
+    }
+
 });
 chrome.tabs.onActivated.addListener(function(activeInfo) {
 	chrome.tabs.executeScript(null, { file: "./contentScript/checkEnable.js" });
 })
+
+function sendToCS(obj){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.sendMessage(tabs[0].id,obj , function(response) {});  
+    });
+}
